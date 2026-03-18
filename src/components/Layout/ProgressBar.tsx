@@ -1,10 +1,6 @@
 import { motion } from 'framer-motion'
 import type { PlantStage } from '../../types/mood'
-import { STAGE_LABELS, STAGE_RANGES } from '../../utils/plantLogic'
-
-const STAGE_ORDER: PlantStage[] = [
-  'seedling', 'small-sapling', 'normal-sapling', 'plant', 'tree', 'tree-with-fruit',
-]
+import { STAGE_LABELS } from '../../utils/plantLogic'
 
 const STAGE_MAX: Record<PlantStage, number> = {
   'seedling':        20,
@@ -33,15 +29,12 @@ export function ProgressBar({ totalEntries, stage }: Props) {
   const min = STAGE_MIN[stage]
   const max = STAGE_MAX[stage]
   const isMaxed = stage === 'tree-with-fruit'
-
   const pct = isMaxed ? 100 : Math.min(100, ((totalEntries - min) / (max - min)) * 100)
 
   return (
     <div className="w-full">
       <div className="flex justify-between items-baseline mb-1">
-        <span className="text-xs font-medium text-stone-600">
-          {STAGE_LABELS[stage]}
-        </span>
+        <span className="text-xs font-medium text-stone-600">{STAGE_LABELS[stage]}</span>
         <span className="text-xs text-stone-400">
           {isMaxed ? `${totalEntries} entries` : `${totalEntries} / ${max}`}
         </span>
@@ -62,8 +55,3 @@ export function ProgressBar({ totalEntries, stage }: Props) {
     </div>
   )
 }
-
-// suppress unused
-const _: typeof STAGE_RANGES = STAGE_RANGES
-const __: typeof STAGE_ORDER = STAGE_ORDER
-void _; void __

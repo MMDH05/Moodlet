@@ -1,13 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
 
-// Fixed fruit positions on the tree
+// Fruit positions at OUTER EDGES of canopy — clearly visible, not buried
 const FRUIT_POSITIONS = [
-  { cx: 36, cy: 108 },
-  { cx: 156, cy: 106 },
-  { cx: 30,  cy: 64 },
-  { cx: 148, cy: 60 },
-  { cx: 54,  cy: 36 },
-  { cx: 124, cy: 32 },
+  { cx: 34,  cy: 136 }, // outer left low
+  { cx: 162, cy: 128 }, // outer right low
+  { cx: 24,  cy: 92  }, // outer left mid
+  { cx: 170, cy: 82  }, // outer right mid
+  { cx: 56,  cy: 46  }, // upper left
+  { cx: 142, cy: 42  }, // upper right
 ]
 
 interface Props {
@@ -19,92 +19,115 @@ export function PlantTreeWithFruit({ fruitCount, fallingFruitIndex }: Props) {
   const visibleFruits = FRUIT_POSITIONS.slice(0, Math.min(fruitCount, 6))
 
   return (
-    <svg viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full overflow-visible">
+    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" className="w-full h-full overflow-visible">
       {/* Trunk */}
-      <path d="M90 188 Q84 160 85 115 Q86 80 88 45" stroke="#8B6340" strokeWidth="9" fill="none" strokeLinecap="round" />
-      <path d="M88 180 Q72 178 65 188" stroke="#8B6340" strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M90 180 Q106 178 113 188" stroke="#8B6340" strokeWidth="5" fill="none" strokeLinecap="round" />
+      <path d="M100 215 Q94 180 95 145 Q96 110 97 75" stroke="#7D5228" strokeWidth="13" fill="none" strokeLinecap="round" />
+      <path d="M97 198 Q80 193 70 208" stroke="#7D5228" strokeWidth="7" fill="none" strokeLinecap="round" />
+      <path d="M100 196 Q118 191 128 208" stroke="#7D5228" strokeWidth="7" fill="none" strokeLinecap="round" />
 
-      {/* Branches */}
-      <path d="M86 145 Q60 132 40 118" stroke="#8B6340" strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M88 152 Q114 137 134 122" stroke="#8B6340" strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M87 110 Q62 94 46 76" stroke="#7B5C30" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <path d="M89 106 Q114 90 130 72" stroke="#7B5C30" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <path d="M87 80 Q68 66 56 52" stroke="#6B4F2A" strokeWidth="3" fill="none" strokeLinecap="round" />
-      <path d="M88 76 Q108 62 120 48" stroke="#6B4F2A" strokeWidth="3" fill="none" strokeLinecap="round" />
-      <path d="M40 118 Q28 108 22 96" stroke="#7B5C30" strokeWidth="3" fill="none" strokeLinecap="round" />
-      <path d="M134 122 Q148 110 154 96" stroke="#7B5C30" strokeWidth="3" fill="none" strokeLinecap="round" />
+      {/* — LAYER 1: deep shadow base — */}
+      <ellipse cx="90" cy="148" rx="55" ry="36" fill="#3A7020" />
+      <ellipse cx="118" cy="140" rx="52" ry="34" fill="#3A7020" />
+      <ellipse cx="70" cy="118" rx="52" ry="36" fill="#3A7020" />
+      <ellipse cx="125" cy="112" rx="55" ry="36" fill="#3A7020" />
+      <ellipse cx="92" cy="90" rx="57" ry="37" fill="#3A7020" />
+      <ellipse cx="100" cy="65" rx="50" ry="34" fill="#3A7020" />
+      <ellipse cx="100" cy="42" rx="42" ry="30" fill="#3A7020" />
 
-      {/* Foliage */}
-      <ellipse cx="36" cy="114" rx="24" ry="16" fill="#3D7A22" transform="rotate(-20 36 114)" />
-      <ellipse cx="22" cy="108" rx="16" ry="11" fill="#4A8E2A" transform="rotate(-45 22 108)" />
-      <ellipse cx="18" cy="92" rx="18" ry="12" fill="#4A8E2A" transform="rotate(-15 18 92)" />
-      <ellipse cx="138" cy="118" rx="24" ry="16" fill="#3D7A22" transform="rotate(20 138 118)" />
-      <ellipse cx="154" cy="112" rx="16" ry="11" fill="#4A8E2A" transform="rotate(45 154 112)" />
-      <ellipse cx="158" cy="92" rx="18" ry="12" fill="#4A8E2A" transform="rotate(15 158 92)" />
-      <ellipse cx="42" cy="72" rx="22" ry="14" fill="#4A8E2A" transform="rotate(-25 42 72)" />
-      <ellipse cx="30" cy="64" rx="14" ry="10" fill="#5A9E35" transform="rotate(-50 30 64)" />
-      <ellipse cx="134" cy="68" rx="22" ry="14" fill="#4A8E2A" transform="rotate(25 134 68)" />
-      <ellipse cx="148" cy="60" rx="14" ry="10" fill="#5A9E35" transform="rotate(50 148 60)" />
-      <ellipse cx="52" cy="48" rx="20" ry="13" fill="#5A9E35" transform="rotate(-30 52 48)" />
-      <ellipse cx="124" cy="44" rx="20" ry="13" fill="#5A9E35" transform="rotate(30 124 44)" />
-      <ellipse cx="80" cy="42" rx="30" ry="20" fill="#5A9E35" />
-      <ellipse cx="100" cy="36" rx="28" ry="18" fill="#68B83C" />
-      <ellipse cx="90" cy="26" rx="24" ry="16" fill="#78C448" />
-      <ellipse cx="88" cy="16" rx="18" ry="13" fill="#8BCF55" />
-      <ellipse cx="90" cy="10" rx="12" ry="9" fill="#98D855" />
+      {/* — LAYER 2: mid green — */}
+      <ellipse cx="78" cy="142" rx="52" ry="32" fill="#4A9A2A" />
+      <ellipse cx="122" cy="134" rx="50" ry="31" fill="#4A9A2A" />
+      <ellipse cx="60" cy="112" rx="48" ry="33" fill="#4A9A2A" />
+      <ellipse cx="132" cy="105" rx="52" ry="33" fill="#4A9A2A" />
+      <ellipse cx="87" cy="84" rx="54" ry="34" fill="#4A9A2A" />
+      <ellipse cx="112" cy="78" rx="50" ry="33" fill="#4A9A2A" />
+      <ellipse cx="98" cy="58" rx="46" ry="31" fill="#4A9A2A" />
+      <ellipse cx="98" cy="36" rx="38" ry="26" fill="#4A9A2A" />
 
-      {/* Fruits rendered via foreignObject to use Framer Motion */}
+      {/* — LAYER 3: bright mid — */}
+      <ellipse cx="66" cy="134" rx="44" ry="28" fill="#5CB535" />
+      <ellipse cx="128" cy="124" rx="44" ry="28" fill="#5CB535" />
+      <ellipse cx="50" cy="104" rx="42" ry="28" fill="#5CB535" />
+      <ellipse cx="145" cy="95" rx="44" ry="29" fill="#5CB535" />
+      <ellipse cx="82" cy="76" rx="48" ry="29" fill="#5CB535" />
+      <ellipse cx="116" cy="70" rx="46" ry="28" fill="#5CB535" />
+      <ellipse cx="95" cy="50" rx="42" ry="27" fill="#5CB535" />
+      <ellipse cx="98" cy="28" rx="34" ry="22" fill="#5CB535" />
+
+      {/* — LAYER 4: light top highlights — */}
+      <ellipse cx="56" cy="122" rx="34" ry="22" fill="#74D448" />
+      <ellipse cx="140" cy="110" rx="36" ry="22" fill="#74D448" />
+      <ellipse cx="42" cy="92" rx="30" ry="20" fill="#74D448" />
+      <ellipse cx="154" cy="82" rx="32" ry="20" fill="#74D448" />
+      <ellipse cx="76" cy="64" rx="40" ry="24" fill="#74D448" />
+      <ellipse cx="122" cy="58" rx="38" ry="22" fill="#74D448" />
+      <ellipse cx="94" cy="38" rx="34" ry="20" fill="#74D448" />
+      <ellipse cx="98" cy="18" rx="26" ry="16" fill="#74D448" />
+
+      {/* — TOP CROWN — */}
+      <ellipse cx="90" cy="24" rx="28" ry="17" fill="#8EE860" />
+      <ellipse cx="108" cy="20" rx="24" ry="15" fill="#8EE860" />
+      <ellipse cx="98" cy="12" rx="20" ry="13" fill="#A0F070" />
+
+      {/* ── Fruits — rendered on top at outer canopy edges ─────────── */}
       {visibleFruits.map((pos, i) => {
         const isFalling = fallingFruitIndex === i
         return (
           <AnimatePresence key={i}>
-            {!isFalling && (
-              <motion.circle
-                key={`fruit-${i}`}
-                cx={pos.cx}
-                cy={pos.cy}
-                r="7"
-                fill="#E05252"
-                stroke="#C03030"
-                strokeWidth="1"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0, y: 40 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              />
-            )}
-            {isFalling && (
+            {!isFalling ? (
+              <g key={`fruit-${i}`}>
+                {/* Leaf stem */}
+                <line
+                  x1={pos.cx + 1}
+                  y1={pos.cy - 9}
+                  x2={pos.cx + 5}
+                  y2={pos.cy - 15}
+                  stroke="#4A9A2A"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <motion.circle
+                  cx={pos.cx}
+                  cy={pos.cy}
+                  r="10"
+                  fill="#E84040"
+                  stroke="#B02020"
+                  strokeWidth="1.5"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.12 }}
+                />
+                {/* Highlight */}
+                <motion.ellipse
+                  cx={pos.cx - 3}
+                  cy={pos.cy - 3}
+                  rx="3"
+                  ry="4"
+                  fill="white"
+                  opacity={0.35}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.5, delay: i * 0.12 + 0.1 }}
+                />
+              </g>
+            ) : (
               <motion.circle
                 key={`fruit-falling-${i}`}
                 cx={pos.cx}
                 cy={pos.cy}
-                r="7"
-                fill="#E05252"
-                stroke="#C03030"
-                strokeWidth="1"
+                r="10"
+                fill="#E84040"
+                stroke="#B02020"
+                strokeWidth="1.5"
                 initial={{ opacity: 1, y: 0, rotate: 0 }}
-                animate={{ opacity: 0, y: 80, rotate: 45 }}
-                transition={{ duration: 0.8, ease: 'easeIn' }}
+                animate={{ opacity: 0, y: 90, rotate: 60 }}
+                transition={{ duration: 0.85, ease: 'easeIn' }}
               />
             )}
           </AnimatePresence>
         )
       })}
-
-      {/* Leaf stems for fruits */}
-      {visibleFruits.map((pos, i) => (
-        <line
-          key={`stem-${i}`}
-          x1={pos.cx}
-          y1={pos.cy - 7}
-          x2={pos.cx + 3}
-          y2={pos.cy - 12}
-          stroke="#5D8A3C"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      ))}
     </svg>
   )
 }

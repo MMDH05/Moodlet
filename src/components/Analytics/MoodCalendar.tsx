@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
-import { format, subYears, eachDayOfInterval, startOfDay, getDay, startOfWeek, addWeeks, differenceInWeeks } from 'date-fns'
+import { format, subYears, startOfWeek, endOfWeek, differenceInWeeks } from 'date-fns'
 import type { MoodEntry } from '../../types/mood'
 import { buildHeatmapData } from '../../utils/analytics'
-import { MOOD_COLORS } from '../../utils/moodColors'
-import type { MoodTag } from '../../types/mood'
 
 interface Props {
   entries: MoodEntry[]
 }
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-const DAYS = ['Mon','','Wed','','Fri','','']
+const DAY_LABELS = ['Mon','','Wed','','Fri','','']
 const CELL_SIZE = 12
 const CELL_GAP = 2
 
@@ -23,7 +21,6 @@ export function MoodCalendar({ entries }: Props) {
     return new Map(data.map((d) => [d.date, d]))
   }, [entries])
 
-  // Build week grid
   const gridStart = startOfWeek(yearAgo, { weekStartsOn: 1 })
   const totalWeeks = differenceInWeeks(today, gridStart) + 2
 
@@ -38,7 +35,6 @@ export function MoodCalendar({ entries }: Props) {
     weeks.push(week)
   }
 
-  // Month label positions
   const monthLabels: { label: string; col: number }[] = []
   let lastMonth = -1
   weeks.forEach((week, wi) => {
@@ -65,32 +61,35 @@ export function MoodCalendar({ entries }: Props) {
     <div className="overflow-x-auto pb-2">
       <div style={{ minWidth: totalWidth + 30 }}>
         {/* Month labels */}
-        <div className="flex mb-1 pl-8">
+        <div className="relative h-5 pl-8 mb-1">
           {monthLabels.map(({ label, col }) => (
-            <div
+            <span
               key={`${label}-${col}`}
-              className="text-xs text-stone-400 absolute"
-              style={{ marginLeft: col * (CELL_SIZE + CELL_GAP) }}
+              className="absolute text-xs text-stone-400"
+              style={{ left: 32 + col * (CELL_SIZE + CELL_GAP) }}
             >
               {label}
-            </div>
+            </span>
           ))}
-          <div style={{ height: 14 }} />
         </div>
 
-        <div className="flex gap-0.5">
+        <div className="flex" style={{ gap: CELL_GAP }}>
           {/* Day labels */}
-          <div className="flex flex-col gap-0.5 mr-1 pt-1">
-            {DAYS.map((d, i) => (
-              <div key={i} className="text-xs text-stone-400 text-right" style={{ height: CELL_SIZE, lineHeight: `${CELL_SIZE}px` }}>
+          <div className="flex flex-col mr-1" style={{ gap: CELL_GAP }}>
+            {DAY_LABELS.map((d, i) => (
+              <div
+                key={i}
+                className="text-xs text-stone-400 text-right"
+                style={{ height: CELL_SIZE, lineHeight: `${CELL_SIZE}px`, width: 24 }}
+              >
                 {d}
               </div>
             ))}
           </div>
 
-          {/* Grid */}
+          {/* Grid columns */}
           {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-0.5">
+            <div key={wi} className="flex flex-col" style={{ gap: CELL_GAP }}>
               {week.map((date) => {
                 const dateStr = format(date, 'yyyy-MM-dd')
                 const todayStr = format(today, 'yyyy-MM-dd')
@@ -113,6 +112,7 @@ export function MoodCalendar({ entries }: Props) {
                       backgroundColor: bg,
                       borderRadius: 2,
                       border: isToday ? '1.5px solid #5D8A3C' : 'none',
+                      flexShrink: 0,
                     }}
                   />
                 )
@@ -125,7 +125,10 @@ export function MoodCalendar({ entries }: Props) {
         <div className="flex items-center gap-1.5 mt-3 pl-8">
           <span className="text-xs text-stone-400">Less</span>
           {['#e7e5e4', '#c6d9b8', '#8bcf55', '#5a9e35', '#3d7a22'].map((c) => (
-            <div key={c} style={{ width: CELL_SIZE, height: CELL_SIZE, backgroundColor: c, borderRadius: 2 }} />
+            <div
+              key={c}
+              style={{ width: CELL_SIZE, height: CELL_SIZE, backgroundColor: c, borderRadius: 2 }}
+            />
           ))}
           <span className="text-xs text-stone-400">More</span>
         </div>
@@ -133,8 +136,3 @@ export function MoodCalendar({ entries }: Props) {
     </div>
   )
 }
-
-// silence unused
-const _: typeof MoodTag = undefined as unknown as MoodTag
-const __: typeof MOOD_COLORS = MOOD_COLORS
-void _; void __
