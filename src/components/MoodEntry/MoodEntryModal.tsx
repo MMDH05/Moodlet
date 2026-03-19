@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MOOD_TAGS, type MoodTag, type MoodRating } from '../../types/mood'
 import { MOOD_COLORS, MOOD_EMOJIS } from '../../utils/moodColors'
 import type { AddEntryPayload } from '../../hooks/useMoodEntries'
+import { analyzeSentiment, type SentimentResult } from '../../utils/sentimentAnalysis'
 
 interface Props {
   isOpen: boolean
@@ -22,6 +23,17 @@ export function MoodEntryModal({ isOpen, onClose, onSubmit }: Props) {
   const [journalText, setJournalText] = useState('')
   const [selectedMoods, setSelectedMoods] = useState<Map<MoodTag, number>>(new Map())
   const [error, setError] = useState<string | null>(null)
+  const [sentiment, setSentiment] = useState<SentimentResult | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (!journalText.trim()) { setSentiment(null); return }
+    debounceRef.current = setTimeout(() => {
+      setSentiment(analyzeSentiment(journalText))
+    }, 400)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [journalText])
 
   function toggleMood(tag: MoodTag) {
     setSelectedMoods((prev) => {
@@ -57,6 +69,7 @@ export function MoodEntryModal({ isOpen, onClose, onSubmit }: Props) {
     setJournalText('')
     setSelectedMoods(new Map())
     setError(null)
+    setSentiment(null)
     onClose()
   }
 
@@ -115,6 +128,66 @@ export function MoodEntryModal({ isOpen, onClose, onSubmit }: Props) {
                   className="w-full rounded-2xl border-2 border-emerald-100 bg-white px-4 py-3 text-sm text-stone-800 resize-none focus:outline-none focus:border-emerald-400 placeholder:text-stone-300 font-medium"
                 />
               </div>
+
+              {/* Sentiment suggestions */}
+              <AnimatePresence>
+                {sentiment && sentiment.suggestedMoods.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-4 overflow-hidden"
+                  >
+                    <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm">
+                          {sentiment.label === 'positive' ? '😊' : sentiment.label === 'negative' ? '😔' : '😐'}
+                        </span>
+                        <span className="text-xs font-black text-emerald-700 uppercase tracking-wider">
+                          Detected from your journal
+                        </span>
+                        <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full"
+                          style={{
+                            backgroundColor: sentiment.label === 'positive' ? '#d1fae5' : sentiment.label === 'negative' ? '#fee2e2' : '#f3f4f6',
+                            color: sentiment.label === 'positive' ? '#065f46' : sentiment.label === 'negative' ? '#991b1b' : '#6b7280',
+                          }}
+                        >
+                          {sentiment.label}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {sentiment.suggestedMoods.map((tag) => {
+                          const isSelected = selectedMoods.has(tag)
+                          return (
+                            <button
+                              key={tag}
+                              onClick={() => toggleMood(tag)}
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+                                isSelected ? 'text-white opacity-60' : 'text-white'
+                              }`}
+                              style={{ backgroundColor: MOOD_COLORS[tag] }}
+                            >
+                              <span>{MOOD_EMOJIS[tag]}</span>
+                              <span>{tag}</span>
+                              {!isSelected && <span className="ml-0.5 opacity-70">+ add</span>}
+                            </button>
+                          )
+                        })}
+                      </div>
+                      {(sentiment.positiveWords.length > 0 || sentiment.negativeWords.length > 0) && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {sentiment.positiveWords.slice(0, 4).map((w) => (
+                            <span key={w} className="text-xs px-1.5 py-0.5 rounded-lg bg-green-100 text-green-700 font-semibold">{w}</span>
+                          ))}
+                          {sentiment.negativeWords.slice(0, 4).map((w) => (
+                            <span key={w} className="text-xs px-1.5 py-0.5 rounded-lg bg-red-100 text-red-700 font-semibold">{w}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Mood tags */}
               <div className="mb-5">

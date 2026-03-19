@@ -4,8 +4,9 @@ import type { MoodEntry } from '../../types/mood'
 import { MoodCalendar } from './MoodCalendar'
 import { WordCloud } from './WordCloud'
 import { WeeklyReport } from './WeeklyReport'
+import { SentimentTrend } from './SentimentTrend'
 
-type Tab = 'calendar' | 'wordcloud' | 'weekly'
+type Tab = 'calendar' | 'wordcloud' | 'weekly' | 'sentiment'
 
 interface Props {
   entries: MoodEntry[]
@@ -17,6 +18,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'calendar',  label: 'Calendar',  icon: '📅' },
   { id: 'wordcloud', label: 'Words',      icon: '☁️' },
   { id: 'weekly',    label: 'Weekly',     icon: '📊' },
+  { id: 'sentiment', label: 'Sentiment',  icon: '🧠' },
 ]
 
 export function AnalyticsPanel({ entries, isOpen, onClose }: Props) {
@@ -88,6 +90,7 @@ export function AnalyticsPanel({ entries, isOpen, onClose }: Props) {
                   {activeTab === 'calendar'  && <MoodCalendar entries={entries} />}
                   {activeTab === 'wordcloud' && <WordCloud entries={entries} />}
                   {activeTab === 'weekly'    && <WeeklyReport entries={entries} />}
+                  {activeTab === 'sentiment' && <SentimentTrend entries={entries} />}
                 </motion.div>
               </AnimatePresence>
             </div>
