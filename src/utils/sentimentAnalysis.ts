@@ -20,9 +20,8 @@ const MOOD_KEYWORDS: Record<MoodTag, string[]> = {
   Gratitude:     ['grateful', 'thankful', 'appreciate', 'blessed', 'thanks', 'lucky', 'fortunate', 'recognition'],
 }
 
-// Singleton instances (avoid re-creating on every call)
+// Singleton instance (avoid re-creating on every call)
 const afinnAnalyzer = new Sentiment()
-const vaderAnalyzer = new SentimentIntensityAnalyzer()
 
 export interface SentimentResult {
   /** Normalized composite score: -1 (very negative) to 1 (very positive) */
@@ -46,7 +45,7 @@ export function analyzeSentiment(text: string): SentimentResult {
 
   // ── Run all three analyzers ───────────────────────────────────────────────
   const afinn = afinnAnalyzer.analyze(text)
-  const vader = vaderAnalyzer.polarity_scores(text)
+  const vader = SentimentIntensityAnalyzer.polarity_scores(text)
   const wink  = winkSentiment(text)
 
   // Normalize to -1..1

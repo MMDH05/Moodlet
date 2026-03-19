@@ -9,7 +9,7 @@ import { WateringCanButton } from './components/MoodEntry/WateringCanButton'
 import { MoodEntryModal } from './components/MoodEntry/MoodEntryModal'
 import { AnalyticsPanel } from './components/Analytics/AnalyticsPanel'
 import { ProgressBar } from './components/Layout/ProgressBar'
-import { SnailInsights } from './components/Layout/SnailInsights'
+import { ChickenInsights } from './components/Layout/SnailInsights'
 import { blendMoodColors } from './utils/moodColors'
 import type { AddEntryPayload } from './hooks/useMoodEntries'
 import type { MoodRating } from './types/mood'
@@ -68,9 +68,9 @@ export default function App() {
           </div>
         </div>
 
-        {/* Snail insights — bottom-left, sitting ON the grass line */}
+        {/* Chicken insights — bottom-left, sitting ON the grass line */}
         <div className="absolute bottom-0 left-5 translate-y-1/2 z-20">
-          <SnailInsights
+          <ChickenInsights
             onClick={() => setAnalyticsOpen(true)}
             hasEntries={totalCount > 0}
           />

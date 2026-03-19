@@ -1,6 +1,6 @@
 declare module 'vader-sentiment' {
   export class SentimentIntensityAnalyzer {
-    polarity_scores(text: string): {
+    static polarity_scores(text: string): {
       pos: number
       neg: number
       neu: number

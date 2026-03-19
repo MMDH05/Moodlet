@@ -131,54 +131,6 @@ export function SentimentTrend({ entries }: Props) {
           <span>Newer</span>
         </div>
       </div>
-
-      {/* Library breakdown */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-base">🔬</span>
-          <h4 className="text-xs font-black text-stone-600 uppercase tracking-wider">Analysis engines</h4>
-        </div>
-        {(() => {
-          const avgAfinn = analyzed.reduce((s, a) => s + a.result.breakdown.afinn, 0) / analyzed.length
-          const avgVader = analyzed.reduce((s, a) => s + a.result.breakdown.vader, 0) / analyzed.length
-          const avgWink  = analyzed.reduce((s, a) => s + a.result.breakdown.wink,  0) / analyzed.length
-          const engines: { name: string; desc: string; score: number }[] = [
-            { name: 'AFINN-165', desc: 'Word-list scoring', score: avgAfinn },
-            { name: 'VADER',     desc: 'Rule-based + punctuation', score: avgVader },
-            { name: 'Wink',      desc: 'AFINN + emoji-aware', score: avgWink },
-          ]
-          return (
-            <div className="space-y-2">
-              {engines.map(({ name, desc, score }) => {
-                const pct = ((score + 1) / 2) * 100  // convert -1..1 to 0..100%
-                const color = score > 0.05 ? '#10b981' : score < -0.05 ? '#ef4444' : '#9ca3af'
-                return (
-                  <div key={name} className="bg-white rounded-2xl p-3 shadow-sm border border-stone-100">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div>
-                        <span className="text-sm font-black text-stone-700">{name}</span>
-                        <span className="text-xs text-stone-400 font-medium ml-2">{desc}</span>
-                      </div>
-                      <span className="text-xs font-bold" style={{ color }}>
-                        {score > 0 ? '+' : ''}{score.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{ width: `${pct}%`, backgroundColor: color }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )
-        })()}
-        <p className="text-xs text-stone-400 font-medium mt-2 text-center">
-          Averaged across {analyzed.length} journaled {analyzed.length === 1 ? 'entry' : 'entries'}
-        </p>
-      </div>
     </div>
   )
 }
